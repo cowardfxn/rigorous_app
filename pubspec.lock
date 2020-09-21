@@ -413,6 +413,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.0-nullsafety"
+  sprintf:
+    dependency: "direct main"
+    description:
+      name: sprintf
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.1.0"
   sqflite:
     dependency: "direct main"
     description:

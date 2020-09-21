@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:rigorous_app/db/item.dart';
+import "package:sprintf/sprintf.dart";
+import "package:intl/intl.dart";
 
 class DailyItemsScreen extends StatefulWidget {
   @override
@@ -130,7 +132,7 @@ class _DailyItemsScreen extends State<DailyItemsScreen>
                         crossAxisCount: multiple ? 2 : 1,
                         mainAxisSpacing: 6.0,
                         crossAxisSpacing: 6.0,
-                        childAspectRatio: multiple ? 1.1 : 3, // 条目宽高比
+                        childAspectRatio: multiple ? 1.1 : 3.6, // 条目宽高比
                       ),
                     ),
                   );
@@ -302,7 +304,7 @@ class _ItemBlock extends State<ItemBlock> {
               ),
             ),
           ),
-          Expanded(
+          Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -329,7 +331,7 @@ class _ItemBlock extends State<ItemBlock> {
                 Padding(
                   padding: EdgeInsets.only(top: 1, right: 2.0),
                   child: Text(
-                    "总价：${widget.item['total']}",
+                    "总价：${sprintf("%.2f", [widget.item['total']])}",
                     style: TextStyle(
                       fontSize: 20.0,
                       color: AppTheme.darkText.withOpacity(0.8),
@@ -339,71 +341,47 @@ class _ItemBlock extends State<ItemBlock> {
               ],
             ),
           ),
-//           Expanded(
-//             child: widget.isMulti
-//                 ? Container()
-//                 : Column(
-//                     children: <Widget>[
-//                       Padding(
-//                         padding: const EdgeInsets.only(top: 4, bottom: 2),
-//                         child: Material(
-//                           color: Colors.transparent,
-//                           child: InkWell(
-//                             splashColor: Colors.grey.withOpacity(0.2),
-//                             borderRadius:
-//                                 const BorderRadius.all(Radius.circular(32.0)),
-//                             child: Icon(Icons.add),
-//                             onTap: () {
-//                               setState(() {
-//                                 itemCnt += 1;
-//                               });
-//                             },
-//                             onLongPress: () {
-//                               setState(() {
-//                                 itemCnt += 10;
-//                               });
-//                             },
-//                           ),
-//                         ),
-//                       ),
-//                       Padding(
-//                         padding: const EdgeInsets.only(top: 2, bottom: 4),
-//                         child: Material(
-//                           color: Colors.transparent,
-// //                  borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-//                           child: InkWell(
-//                             splashColor: Colors.grey.withOpacity(0.4),
-//                             borderRadius:
-//                                 const BorderRadius.all(Radius.circular(32.0)),
-//                             child: Icon(Icons.remove),
-//                             onTap: () {
-//                               if (itemCnt > 0) {
-//                                 setState(() {
-//                                   itemCnt -= 1;
-//                                 });
-//                               }
-//                             },
-//                             onLongPress: () {
-//                               if (itemCnt > 9) {
-//                                 setState(() {
-//                                   itemCnt -= 10;
-//                                 });
-//                               }
-//                             },
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//           ),
+          extraAttrs(!widget.isMulti, widget.item),
         ],
       ),
     );
   }
 }
 
-// const items = [
-//   {"content": "one", "itemCnt": 0},
-//   {"content": "two", "itemCnt": 2222},
-//   {"content": "项目二", "itemCnt": 33}
-// ];
+Widget extraAttrs(bool isMulti, Map<String, dynamic> item) {
+  if (!isMulti) {
+    return Container();
+  }
+
+  String formatted = DateFormat("yyyy-MM-dd HH:mm:ss")
+      .format(DateTime.parse(item['createdAt']));
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      SizedBox(
+        height: 37,
+      ),
+      Text(
+        "类型：${item['isWarehouse'] == 1 ? "入库" : "出库"}",
+        style: TextStyle(
+          fontSize: 20.0,
+          color: AppTheme.darkText.withOpacity(0.8),
+        ),
+      ),
+      // Text(
+      //   "日期：$formatted",
+      //   style: TextStyle(
+      //     fontSize: 20.0,
+      //     color: AppTheme.darkText.withOpacity(0.8),
+      //   ),
+      // ),
+      Text(
+        "单价：${sprintf("%.2f", [item['price']])}",
+        style: TextStyle(
+          fontSize: 20.0,
+          color: AppTheme.darkText.withOpacity(0.8),
+        ),
+      ),
+    ],
+  );
+}
