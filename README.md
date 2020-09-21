@@ -1,6 +1,6 @@
 # rigorous_app
 
-A new Flutter application.
+Flutter trials
 
 ## Getting Started
 
